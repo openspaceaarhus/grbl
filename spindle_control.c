@@ -26,20 +26,20 @@
 
 void spindle_init()
 {
-  SPINDLE_ENABLE_DDR |= 1<<SPINDLE_ENABLE_BIT;
+    SPINDLE_ENABLE_DDR |= 1 << SPINDLE_ENABLE_BIT;
 }
 
-void spindle_run(int direction, uint32_t rpm) 
+void spindle_run(int direction, uint32_t rpm)
 {
-  if(direction >= 0) {
-    SPINDLE_DIRECTION_PORT &= ~(1<<SPINDLE_DIRECTION_BIT);
-  } else {
-    SPINDLE_DIRECTION_PORT |= 1<<SPINDLE_DIRECTION_BIT;
-  }
-  SPINDLE_ENABLE_PORT |= 1<<SPINDLE_ENABLE_BIT;
+    if (direction >= 0) {
+	SPINDLE_DIRECTION_PORT &= ~(1 << SPINDLE_DIRECTION_BIT);
+    } else {
+	SPINDLE_DIRECTION_PORT |= 1 << SPINDLE_DIRECTION_BIT;
+    }
+    SPINDLE_ENABLE_PORT |= 1 << SPINDLE_ENABLE_BIT;
 }
 
 void spindle_stop()
 {
-  SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT);
+    SPINDLE_ENABLE_PORT &= ~(1 << SPINDLE_ENABLE_BIT);
 }

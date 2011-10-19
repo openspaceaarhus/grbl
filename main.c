@@ -37,16 +37,16 @@
 
 int main(void)
 {
-  sp_init();        
-  settings_init();  
-  plan_init();      
-  st_init();        
-  spindle_init();   
-  gc_init();        
-                    
-  for(;;){
-    sleep_mode(); // Wait for it ...
-    sp_process(); // ... process the serial protocol
-  }
-  return 0;   /* never reached */
+    sp_init();
+    settings_init();
+    plan_init();
+    st_init();
+    spindle_init();
+    gc_init();
+
+    for (;;) {
+	sleep_mode();		// Wait for it ...
+	sp_process();		// ... process the serial protocol
+    }
+    return 0;			/* never reached */
 }

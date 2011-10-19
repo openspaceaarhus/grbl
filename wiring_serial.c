@@ -45,70 +45,70 @@ int rx_buffer_tail = 0;
 
 void beginSerial(long baud)
 {
-	UBRR0H = ((F_CPU / 16 + baud / 2) / baud - 1) >> 8;
-	UBRR0L = ((F_CPU / 16 + baud / 2) / baud - 1);
-	
-	/* baud doubler off  - Only needed on Uno XXX */
-  UCSR0A &= ~(1 << U2X0);
-          
-	// enable rx and tx
-  UCSR0B |= 1<<RXEN0;
-  UCSR0B |= 1<<TXEN0;
-	
-	// enable interrupt on complete reception of a byte
-  UCSR0B |= 1<<RXCIE0;
-	
-	// defaults to 8-bit, no parity, 1 stop bit
+    UBRR0H = ((F_CPU / 16 + baud / 2) / baud - 1) >> 8;
+    UBRR0L = ((F_CPU / 16 + baud / 2) / baud - 1);
+
+    /* baud doubler off  - Only needed on Uno XXX */
+    UCSR0A &= ~(1 << U2X0);
+
+    // enable rx and tx
+    UCSR0B |= 1 << RXEN0;
+    UCSR0B |= 1 << TXEN0;
+
+    // enable interrupt on complete reception of a byte
+    UCSR0B |= 1 << RXCIE0;
+
+    // defaults to 8-bit, no parity, 1 stop bit
 }
 
 void serialWrite(unsigned char c)
 {
-	while (!(UCSR0A & (1 << UDRE0)))
-		;
+    while (!(UCSR0A & (1 << UDRE0)));
 
-	UDR0 = c;
+    UDR0 = c;
 }
 
 int serialAvailable()
 {
-	return (RX_BUFFER_SIZE + rx_buffer_head - rx_buffer_tail) % RX_BUFFER_SIZE;
+    return (RX_BUFFER_SIZE + rx_buffer_head -
+	    rx_buffer_tail) % RX_BUFFER_SIZE;
 }
 
 int serialRead()
 {
-	// if the head isn't ahead of the tail, we don't have any characters
-	if (rx_buffer_head == rx_buffer_tail) {
-		return -1;
-	} else {
-		unsigned char c = rx_buffer[rx_buffer_tail];
-		rx_buffer_tail = (rx_buffer_tail + 1) % RX_BUFFER_SIZE;
-		return c;
-	}
+    // if the head isn't ahead of the tail, we don't have any characters
+    if (rx_buffer_head == rx_buffer_tail) {
+	return -1;
+    } else {
+	unsigned char c = rx_buffer[rx_buffer_tail];
+	rx_buffer_tail = (rx_buffer_tail + 1) % RX_BUFFER_SIZE;
+	return c;
+    }
 }
 
 void serialFlush()
 {
-	// don't reverse this or there may be problems if the RX interrupt
-	// occurs after reading the value of rx_buffer_head but before writing
-	// the value to rx_buffer_tail; the previous value of rx_buffer_head
-	// may be written to rx_buffer_tail, making it appear as if the buffer
-	// were full, not empty.
-	rx_buffer_head = rx_buffer_tail;
+    // don't reverse this or there may be problems if the RX interrupt
+    // occurs after reading the value of rx_buffer_head but before writing
+    // the value to rx_buffer_tail; the previous value of rx_buffer_head
+    // may be written to rx_buffer_tail, making it appear as if the buffer
+    // were full, not empty.
+    rx_buffer_head = rx_buffer_tail;
 }
 
 SIGNAL(USART_RX_vect)
 {
-	unsigned char c = UDR0;
-	int i = (rx_buffer_head + 1) % RX_BUFFER_SIZE;
+    unsigned char c = UDR0;
+    int i = (rx_buffer_head + 1) % RX_BUFFER_SIZE;
 
-	// if we should be storing the received character into the location
-	// just before the tail (meaning that the head would advance to the
-	// current location of the tail), we're about to overflow the buffer
-	// and so we don't write the character or advance the head.
-	if (i != rx_buffer_tail) {
-		rx_buffer[rx_buffer_head] = c;
-		rx_buffer_head = i;
-	}
+    // if we should be storing the received character into the location
+    // just before the tail (meaning that the head would advance to the
+    // current location of the tail), we're about to overflow the buffer
+    // and so we don't write the character or advance the head.
+    if (i != rx_buffer_tail) {
+	rx_buffer[rx_buffer_head] = c;
+	rx_buffer_head = i;
+    }
 }
 
 // void printMode(int mode)
@@ -118,7 +118,7 @@ SIGNAL(USART_RX_vect)
 
 void printByte(unsigned char c)
 {
-	serialWrite(c);
+    serialWrite(c);
 }
 
 // void printNewline()
@@ -128,56 +128,55 @@ void printByte(unsigned char c)
 // 
 void printString(const char *s)
 {
-	while (*s)
-		printByte(*s++);
+    while (*s)
+	printByte(*s++);
 }
 
 // Print a string stored in PGM-memory
 void printPgmString(const char *s)
 {
-  char c;
-	while ((c = pgm_read_byte_near(s++)))
-		printByte(c);
+    char c;
+    while ((c = pgm_read_byte_near(s++)))
+	printByte(c);
 }
 
 void printIntegerInBase(unsigned long n, unsigned long base)
-{ 
-	unsigned char buf[8 * sizeof(long)]; // Assumes 8-bit chars. 
-	unsigned long i = 0;
+{
+    unsigned char buf[8 * sizeof(long)];	// Assumes 8-bit chars. 
+    unsigned long i = 0;
 
-	if (n == 0) {
-		printByte('0');
-		return;
-	} 
+    if (n == 0) {
+	printByte('0');
+	return;
+    }
 
-	while (n > 0) {
-		buf[i++] = n % base;
-		n /= base;
-	}
+    while (n > 0) {
+	buf[i++] = n % base;
+	n /= base;
+    }
 
-	for (; i > 0; i--)
-		printByte(buf[i - 1] < 10 ?
-			'0' + buf[i - 1] :
-			'A' + buf[i - 1] - 10);
+    for (; i > 0; i--)
+	printByte(buf[i - 1] < 10 ?
+		  '0' + buf[i - 1] : 'A' + buf[i - 1] - 10);
 }
 
 void printInteger(long n)
 {
-	if (n < 0) {
-		printByte('-');
-		n = -n;
-	}
+    if (n < 0) {
+	printByte('-');
+	n = -n;
+    }
 
-	printIntegerInBase(n, 10);
+    printIntegerInBase(n, 10);
 }
 
 void printFloat(double n)
 {
-  double integer_part, fractional_part;
-  fractional_part = modf(n, &integer_part);
-  printInteger(integer_part);
-  printByte('.');
-  printInteger(labs(round(fractional_part*1000)));
+    double integer_part, fractional_part;
+    fractional_part = modf(n, &integer_part);
+    printInteger(integer_part);
+    printByte('.');
+    printInteger(labs(round(fractional_part * 1000)));
 }
 
 // void printHex(unsigned long n)

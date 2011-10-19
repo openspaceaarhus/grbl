@@ -33,15 +33,15 @@
 
 // Current global settings (persisted in EEPROM from byte 1 onwards)
 typedef struct {
-  double steps_per_mm[3];
-  uint8_t microsteps;
-  uint8_t pulse_microseconds;
-  double default_feed_rate;
-  double default_seek_rate;
-  uint8_t invert_mask;
-  double mm_per_arc_segment;
-  double acceleration;
-  double max_jerk;
+    double steps_per_mm[3];
+    uint8_t microsteps;
+    uint8_t pulse_microseconds;
+    double default_feed_rate;
+    double default_seek_rate;
+    uint8_t invert_mask;
+    double mm_per_arc_segment;
+    double acceleration;
+    double max_jerk;
 } settings_t;
 extern settings_t settings;
 
@@ -61,7 +61,7 @@ void settings_store_setting(int parameter, double value);
 #define DEFAULT_Z_STEPS_PER_MM (94.488188976378*MICROSTEPS)
 #define DEFAULT_STEP_PULSE_MICROSECONDS 30
 #define DEFAULT_MM_PER_ARC_SEGMENT 0.1
-#define DEFAULT_RAPID_FEEDRATE 480.0 // in millimeters per minute
+#define DEFAULT_RAPID_FEEDRATE 480.0	// in millimeters per minute
 #define DEFAULT_FEEDRATE 480.0
 #define DEFAULT_ACCELERATION (DEFAULT_FEEDRATE/100.0)
 #define DEFAULT_MAX_JERK 50.0

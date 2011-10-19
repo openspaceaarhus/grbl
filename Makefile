@@ -1,6 +1,7 @@
 #  Part of Grbl
 #
 #  Copyright (c) 2009-2011 Simen Svale Skogsrud
+#  Copyright (c) 2011 Flemming Frandsen
 #
 #  Grbl is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -27,8 +28,8 @@
 #                is connected.
 # FUSES ........ Parameters for avrdude to flash the fuses appropriately.
 
-DEVICE     = atmega328p
-CLOCK      = 16000000
+DEVICE     = atmega324p
+CLOCK      = 20000000
 PROGRAMMER = -c avrisp2 -P usb
 OBJECTS    = main.o motion_control.o gcode.o spindle_control.o wiring_serial.o serial_protocol.o stepper.o \
              eeprom.o settings.o planner.o
@@ -40,7 +41,7 @@ FUSES      = -U hfuse:w:0xd2:m -U lfuse:w:0xff:m
 # Tune the lines below only if you know what you are doing:
 
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE) -B 10 -F 
-COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -I. -ffunction-sections
+COMPILE = avr-gcc -Wall -Os -pedantic-errors -Werror -std=c99 -Wl,-u,vfprintf -lprintf_min -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -I. -ffunction-sections
 
 # symbolic targets:
 all:	grbl.hex

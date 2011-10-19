@@ -3,6 +3,7 @@
   Part of Arduino - http://www.arduino.cc/
 
   Copyright (c) 2005-2006 David A. Mellis
+  Copyright (c) 2011 Flemming Frandsen
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,10 +33,10 @@
 // using a ring buffer (I think), in which rx_buffer_head is the index of the
 // location to which to write the next incoming character and rx_buffer_tail
 // is the index of the location from which to read.
-#ifdef __AVR_ATmega328P__
-#define RX_BUFFER_SIZE 256
-#else
+#ifdef CFG_TINY
 #define RX_BUFFER_SIZE 64
+#else
+#define RX_BUFFER_SIZE 256
 #endif
 
 unsigned char rx_buffer[RX_BUFFER_SIZE];
@@ -96,7 +97,7 @@ void serialFlush()
     rx_buffer_head = rx_buffer_tail;
 }
 
-SIGNAL(USART_RX_vect)
+SIGNAL(USART0_RX_vect)
 {
     unsigned char c = UDR0;
     int i = (rx_buffer_head + 1) % RX_BUFFER_SIZE;

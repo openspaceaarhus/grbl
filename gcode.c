@@ -3,6 +3,7 @@
   Part of Grbl
 
   Copyright (c) 2009-2011 Simen Svale Skogsrud
+  Copyright (c) 2011 Flemming Frandsen
 
   Grbl is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -98,7 +99,7 @@ void gc_init()
     gc.absolute_mode = TRUE;
 }
 
-inline float to_millimeters(double value)
+float to_millimeters(double value)
 {
     return (gc.inches_mode ? (value * MM_PER_INCH) : value);
 }
@@ -185,7 +186,7 @@ uint8_t gc_execute_line(char *line)
 	    case 1:
 		gc.motion_mode = MOTION_MODE_LINEAR;
 		break;
-#ifdef __AVR_ATmega328P__
+#ifndef CFG_TINY
 	    case 2:
 		gc.motion_mode = MOTION_MODE_CW_ARC;
 		break;
@@ -355,7 +356,7 @@ uint8_t gc_execute_line(char *line)
 		    (gc.inverse_feed_rate_mode) ? inverse_feed_rate : gc.
 		    feed_rate, gc.inverse_feed_rate_mode);
 	    break;
-#ifdef __AVR_ATmega328P__
+#ifndef CFG_TINY
 	case MOTION_MODE_CW_ARC:
 	case MOTION_MODE_CCW_ARC:
 	    if (radius_mode) {

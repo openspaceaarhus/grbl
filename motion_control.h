@@ -31,7 +31,7 @@
 // NOTE: Although this function structurally belongs in this module, there is nothing to do but
 // to forward the request to the planner. For efficiency the function is implemented with a macro.
 
-#ifdef __AVR_ATmega328P__
+#ifndef CFG_TINY
 // Execute an arc. theta == start angle, angular_travel == number of radians to go along the arc,
 // positive angular_travel means clockwise, negative means counterclockwise. Radius == the radius of the
 // circle in millimeters. axis_1 and axis_2 selects the circle plane in tool space. Stick the remaining

@@ -64,10 +64,10 @@
 #include "wiring_serial.h"
 
 // The number of linear motions that can be in the plan at any give time
-#ifdef __AVR_ATmega328P__
-#define BLOCK_BUFFER_SIZE 20
-#else
+#ifdef CFG_TINY
 #define BLOCK_BUFFER_SIZE 5
+#else
+#define BLOCK_BUFFER_SIZE 20
 #endif
 
 static block_t block_buffer[BLOCK_BUFFER_SIZE];	// A ring buffer for motion instructions
@@ -365,14 +365,14 @@ int plan_is_acceleration_manager_enabled()
     return (acceleration_manager_enabled);
 }
 
-inline void plan_discard_current_block()
+void plan_discard_current_block()
 {
     if (block_buffer_head != block_buffer_tail) {
 	block_buffer_tail = (block_buffer_tail + 1) % BLOCK_BUFFER_SIZE;
     }
 }
 
-inline block_t *plan_get_current_block()
+block_t *plan_get_current_block()
 {
     if (block_buffer_head == block_buffer_tail) {
 	return (NULL);
